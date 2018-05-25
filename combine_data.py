@@ -12,6 +12,8 @@ import pandas as pd
 import itertools
 import csv
 import urllib
+import urllib.request
+import requests
 
 from scipy import stats
 
@@ -25,19 +27,16 @@ for i in range(len(names)):
     print(i)
     ticker = names[i]
     url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
-    data = urllib.request.urlopen(url)
-    file_name = os.path.join(save_path, ticker+".txt") 
-    f = open(file_name, 'wb')
-    f.write(data)
-    f.close()
+    r = requests.get(url, allow_redirects=True)
+    open(ticker, 'wb').write(r.content)
 
-
+    
 # 1. Load stock data into a dataframe and prepare for analysis
 
 
 #1.1 Load close prices
 # Set the directory to the directory where the stock data is stored
-os.chdir("/Users/wengshian/Desktop/Personal_Projects/stock_data")
+os.chdir("/Users/wengshian/Documents/GitHub/TSF-Risk/stock_data")
 
 # prepare the fileList and dataframe for stock data
 fileList = []

@@ -10,10 +10,20 @@ import os, glob, string
 import numpy as np
 import pandas as pd
 import itertools
+import csv
+import urllib2
+
 from scipy import stats
 
 
 #Download all stock files
+positions = pd.read_excel('TSF_Portfolio.xlsx')
+names = list(positions["Ticker"])
+
+for i in range(len(names)):
+    ticker = names[i]
+    url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
+    urllib2.request.urlopen(url)
 
 
 # 1. Load stock data into a dataframe and prepare for analysis

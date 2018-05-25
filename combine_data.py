@@ -5,25 +5,31 @@ Created on Thu May 24 11:20:58 2018
 
 @author: wengshian
 """
-
+import os.path
 import os, glob, string
 import numpy as np
 import pandas as pd
 import itertools
 import csv
-import urllib2
+import urllib
 
 from scipy import stats
 
 
 #Download all stock files
+save_path = '/stock_data'
 positions = pd.read_excel('TSF_Portfolio.xlsx')
 names = list(positions["Ticker"])
 
 for i in range(len(names)):
+    print(i)
     ticker = names[i]
     url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
-    urllib2.request.urlopen(url)
+    data = urllib.request.urlopen(url)
+    file_name = os.path.join(save_path, ticker+".txt") 
+    f = open(file_name, 'wb')
+    f.write(data)
+    f.close()
 
 
 # 1. Load stock data into a dataframe and prepare for analysis

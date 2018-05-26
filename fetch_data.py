@@ -25,6 +25,8 @@ if __name__ == "__main__":
     # filter the table for selected tickers, columns within a time range
     # set paginate to True because Quandl limits tables API to 10,000 rows per call
     
+    # 1. Get the individual stock data
+    
     #three year stock data
     three_year_stock_data = quandl.get_table('WIKI/PRICES', ticker = names, qopts = { 'columns': ['ticker', 'date', 'adj_close'] }, 
                             date = { 'gte': str(year-3) + "-" + str(month) + "-" + str(day) , 'lte': str(year) + "-" + str(month) + "-" + str(day) }, 
@@ -67,12 +69,15 @@ if __name__ == "__main__":
     three_month_stock_data=three_month_stock_data.dropna(axis=1)
     
     #get latest data
-    latest_data = quandl.get_table('/PRICES', ticker = names, qopts = { 'columns': ['ticker', 'date', 'adj_close'] }, 
-                            date = str(year) + "-" + str(month) + "-" + str(day-1), paginate=True)
+    #latest_data = quandl.get_table('/PRICES', ticker = names, qopts = { 'columns': ['ticker', 'date', 'adj_close'] }, 
+                            #date = str(year) + "-" + str(month) + "-" + str(day-1), paginate=True)
     
-    latest_data = latest_data.pivot(index= 'date',columns='ticker',values='adj_close')
+    #latest_data = latest_data.pivot(index= 'date',columns='ticker',values='adj_close')
     
     
+    # 2. Get market data
+    
+    # 3. Get sector data
     
     three_year_stock_data.to_csv("three_year_data")
     one_year_stock_data.to_csv("one_year_data")

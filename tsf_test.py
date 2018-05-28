@@ -8,7 +8,6 @@ import quandl
 import matplotlib.pyplot as plt
 
 def make_returns(data):
-    
     for i in range(1,len(data)):
         data.iloc[i-1] = data.iloc[i]/data.iloc[i-1] - 1
     data = data.drop(len(data)-1,0)

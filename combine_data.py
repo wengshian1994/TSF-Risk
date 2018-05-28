@@ -19,7 +19,8 @@ from scipy import stats
 
 
 #Download all stock files
-save_path = '/stock_data'
+#save_path = '/stock_data'
+'''
 positions = pd.read_excel('TSF_Portfolio.xlsx')
 names = list(positions["Ticker"])
 
@@ -29,6 +30,7 @@ for i in range(len(names)):
     url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
     r = requests.get(url, allow_redirects=True)
     open(ticker, 'wb').write(r.content)
+'''
 
     
 # 1. Load stock data into a dataframe and prepare for analysis
@@ -46,7 +48,7 @@ df = pd.DataFrame()
 dataSetSize = 100
 
 # read all file names
-for files in glob.glob("*.txt"):
+for files in glob.glob("*.txts"):
     print(files)
     #ignore empty files
     if os.path.getsize(files) == 0:

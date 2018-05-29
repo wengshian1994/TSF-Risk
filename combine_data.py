@@ -32,11 +32,6 @@ for i in range(len(names)):
     r = requests.get(url, allow_redirects=True)
     open("stock_data/" + ticker + ".txt", 'wb').write(r.content)
 
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 5295e3069e58400ea1893ca6b610d205e9343434
 # 1. Load stock data into a dataframe and prepare for analysis
 
 

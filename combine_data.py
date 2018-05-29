@@ -21,7 +21,7 @@ from datetime import datetime
 
 #Download all stock files
 #save_path = '/stock_data'
-"""
+
 positions = pd.read_excel('TSF_Portfolio.xlsx')
 names = list(positions["Ticker"])
 
@@ -30,15 +30,15 @@ for i in range(len(names)):
     ticker = names[i]
     url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
     r = requests.get(url, allow_redirects=True)
-    open(ticker + ".txt", 'wb').write(r.content)
-"""
-    
+    open("stock_data/" + ticker + ".txt", 'wb').write(r.content)
+
+
 # 1. Load stock data into a dataframe and prepare for analysis
 
 
 #1.1 Load close prices
 # Set the directory to the directory where the stock data is stored
-os.chdir("/Users/wengshian/Documents/GitHub/TSF-Risk/stock_data")
+os.chdir("stock_data")
 
 # prepare the fileList and dataframe for stock data
 fileList = []

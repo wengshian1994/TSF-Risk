@@ -80,6 +80,15 @@ for file in glob.glob("*.txt"):
     one_year_df[ticker] = frame_one_year["Close"]
     three_year_df[ticker] = frame_three_month["Close"]
 
+#drop the NAs in the respective dataframes
+#frame_three_year=frame_three_year.dropna(axis=1)
+#frame_one_year=frame_one_year.dropna(axis=1)
+#frame_three_month=frame_three_month.dropna(axis=1)
+
+frame_three_year.to_csv("three_year_data")
+frame_one_year.to_csv("one_year_data")
+frame_three_month.to_csv("three_month_data")
+
 # change row names to stock ticker symbols
 #df.index = fileList
 

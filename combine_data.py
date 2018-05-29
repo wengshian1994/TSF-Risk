@@ -87,6 +87,8 @@ for file in glob.glob("*.txt"):
 #frame_one_year=frame_one_year.dropna(axis=1)
 #frame_three_month=frame_three_month.dropna(axis=1)
 
+
+
 os.chdir("..")
 three_year_df.to_csv("three_year_data")
 one_year_df.to_csv("one_year_data")

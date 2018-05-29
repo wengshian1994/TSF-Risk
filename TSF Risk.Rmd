@@ -1,5 +1,5 @@
 ---
-title: "TSF Risk"
+title: "Tartan Student Fund Risk Analysis (May 2018)"
 author: "Weng Shian Ho"
 date: "5/29/2018"
 output: pdf_document
@@ -9,22 +9,42 @@ output: pdf_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## R Markdown
+#Value At Risk Summary (One Week)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+library(knitr)
+VaR.Data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/VaR_Numbers",sep='\t')[-1,]
+row_names <- VaR.Data[,1]
+VaR.Data <- data.frame(as.numeric(as.character(VaR.Data[,2]))*100)
+rownames(VaR.Data) <- row_names
+colnames(VaR.Data) <- c('Value At Risk (VaR)')
+kable(VaR.Data,row.names = TRUE,col.names = "% of Portfolio" ,caption = "Value At Risk (%)",digits = 2)
 ```
 
-## Including Plots
+#Weekly Return Distribution
+```{r}
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+three.month.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/Three_Month_Port_History")
+one.year.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/One_Year_Port_History")
+three.year.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/Three_Year_Port_History")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r, warning=FALSE}
+library(ggplot2)
+#3 Month Plot
+ggplot(data=three.month.port.data, aes(three.month.port.data$X0)) + geom_histogram(breaks=seq(min(three.month.port.data$X0), max(three.month.port.data$X0), by = 0.005), col="red", fill="red", alpha = .2) + 
+  labs(title="Histogram for Portfolio Returns (3 Month Data)") +
+  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
+
+#1 Year Plot
+ggplot(data=one.year.port.data, aes(one.year.port.data$X0)) + geom_histogram(breaks=seq(min(one.year.port.data$X0), max(one.year.port.data$X0), by = 0.005), col="blue", fill="blue", alpha = .2) + 
+  labs(title="Histogram for Portfolio Returns (1 Year Data)") +
+  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
+
+#3 Year Plot
+ggplot(data=three.year.port.data, aes(three.year.port.data$X0)) + geom_histogram(breaks=seq(min(three.year.port.data$X0), max(three.year.port.data$X0), by = 0.005), col="black", fill="black", alpha = .2) + 
+  labs(title="Histogram for Portfolio Returns (3 Year Data)") +
+  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
+
+```
+

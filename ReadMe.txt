@@ -16,3 +16,8 @@ Aim to create a csv file and then use RMarkdown to take the data.
 combine_test.py:
 Fetch data from stooq (to overcome the quandl data problems). Download the
 stock data files from stooq and then save it into a csv file.
+
+Order to run the scripts:
+1. combine_test.py
+2. tsf_test.py
+3. TSF Risk.Rmd

@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 def make_returns(data):
     for i in range(1,len(data)):
-        data.iloc[i-1] = math.log(data.iloc[i]/data.iloc[i-1])
+        data.iloc[i-1] = np.log(data.iloc[i]/data.iloc[i-1])
     data = data.drop(len(data)-1,0)
     return data
 
@@ -33,6 +33,11 @@ if __name__ == "__main__":
     one_year_data = pd.read_csv('one_year_data')
     three_month_data = pd.read_csv('three_month_data')
     latest_price = three_month_data.iloc[len(three_month_data)-1]
+    
+    #remove the NANs and replace it with column means
+    three_year_data= three_year_data.fillna(three_year_data.mean())
+    one_year_data= one_year_data.fillna(one_year_data.mean())
+    three_month_data= three_month_data.fillna(three_month_data.mean())
     
     #process data
     # 1. Make returns
@@ -110,4 +115,11 @@ if __name__ == "__main__":
     three_year_port_history.to_csv("Three_Year_Port_History", sep='\t')
     one_year_port_history.to_csv("One_Year_Port_History", sep='\t')
     three_month_port_history.to_csv("Three_Month_Port_History", sep='\t')
+    
+    #6. Get names of stocks not in analysis
+    not_in_list = names
+    for name in list(three_year_data):
+        not_in_list.remove(name)
+    not_in_list = pd.DataFrame(np.array(not_in_list))
+    not_in_list.to_csv("Not_In",sep='\t')
     

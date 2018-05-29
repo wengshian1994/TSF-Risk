@@ -25,12 +25,15 @@ from datetime import datetime
 positions = pd.read_excel('TSF_Portfolio.xlsx')
 names = list(positions["Ticker"])
 
+'''
 for i in range(len(names)):
     print(i)
     ticker = names[i]
     url = 'https://stooq.com/q/d/l/?s=' + ticker + ".US&i=d"
     r = requests.get(url, allow_redirects=True)
     open("stock_data/" + ticker + ".txt", 'wb').write(r.content)
+
+'''
 
 # 1. Load stock data into a dataframe and prepare for analysis
 
@@ -75,18 +78,19 @@ for file in glob.glob("*.txt"):
     #print(frame)
     if len(frame_three_month) == 0:
         continue
-    three_month_df[ticker] = frame_three_year["Close"]
+    three_month_df[ticker] = frame_three_month["Close"]
     one_year_df[ticker] = frame_one_year["Close"]
-    three_year_df[ticker] = frame_three_month["Close"]
+    three_year_df[ticker] = frame_three_year["Close"]
 
 #drop the NAs in the respective dataframes
 #frame_three_year=frame_three_year.dropna(axis=1)
 #frame_one_year=frame_one_year.dropna(axis=1)
 #frame_three_month=frame_three_month.dropna(axis=1)
 
-frame_three_year.to_csv("three_year_data")
-frame_one_year.to_csv("one_year_data")
-frame_three_month.to_csv("three_month_data")
+os.chdir("..")
+three_year_df.to_csv("three_year_data")
+one_year_df.to_csv("one_year_data")
+three_month_df.to_csv("three_month_data")
 
 # change row names to stock ticker symbols
 #df.index = fileList

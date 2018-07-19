@@ -5,6 +5,7 @@ Created on Thu May 24 11:20:58 2018
 
 @author: wengshian
 """
+import sys
 import os.path
 import os, glob, string
 import numpy as np
@@ -41,6 +42,13 @@ for i in range(len(names)):
 # Set the directory to the directory where the stock data is stored
 os.chdir("stock_data")
 
+#Set the date from which data is extracted
+start_date = sys.argv[1]
+print(start_date)
+date_format = '%Y-%m-%d'
+start_date = datetime.strptime(start_date, date_format)
+
+
 # prepare the fileList and dataframe for stock data
 fileList = []
 df = pd.DataFrame()
@@ -71,9 +79,19 @@ for file in glob.glob("*.txt"):
     if os.path.getsize(file) == 0:
         continue
     ticker = file[:-4]
-    frame_three_year = pd.read_table(file, sep = ',', index_col = 0).tail(three_year_days)
-    frame_one_year = pd.read_table(file, sep = ',', index_col = 0).tail(one_year_days)
-    frame_three_month = pd.read_table(file, sep = ',', index_col = 0).tail(three_month_days)
+    
+    print(file)
+
+    #Select valid dates
+    data_frame = pd.read_table(file, sep = ',', index_col = 0)
+    data_frame = data_frame.loc[data_frame['Date'].map(lambda x: datetime.strptime(x, date_format)) <= start_date]
+
+    #Cut the data framme to suitable number of days
+    frame_three_year = data_frame.tail(three_year_days)
+    frame_one_year = data_frame.tail(one_year_days)
+    frame_three_month = data_frame.tail(three_month_days)
+
+
     #print(frame)
     if len(frame_three_month) == 0:
         continue
@@ -89,9 +107,9 @@ for file in glob.glob("*.txt"):
 
 
 os.chdir("..")
-three_year_df.to_csv("three_year_data")
-one_year_df.to_csv("one_year_data")
-three_month_df.to_csv("three_month_data")
+three_year_df.to_csv("three_year_data_June.csv")
+one_year_df.to_csv("one_year_data_June.csv")
+three_month_df.to_csv("three_month_data_June.csv")
 
 # change row names to stock ticker symbols
 #df.index = fileList

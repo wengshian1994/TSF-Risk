@@ -28,17 +28,26 @@ def make_arrays(stock_names, portfolio_dict):
 
 
 if __name__ == "__main__":
-    # read respective files
-    save_into = sys.argv[1]
-    print(save_into)
+    # read analysis date from cmd line in format yyyy-mm-dd
+    start_date = sys.argv[1]
+    date_format = "%Y-%m-%d"
+    start_date = datetime.strptime(start_date, date_format)
 
     positions = pd.read_excel('TSF_Portfolio.xlsx')
     three_year_data = pd.read_csv('three_year_data')
     one_year_data = pd.read_csv('one_year_data')
     three_month_data = pd.read_csv('three_month_data')
     latest_price = three_month_data.iloc[len(three_month_data)-1]
-    #remove the NANs and replace it with column means
+    
+    three_year_data = three_year_data.loc[three_year_data['Date'].map(lambda x: datetime.strptime(x, date_format)) <= start_date]
+    print(three_year_data)
+    one_year_data = one_year_data.loc[one_year_data['Date'].map(lambda x: datetime.strptime(x, date_format)) <= start_date]
+    print(one_year_data)
+    three_month_data = three_month_data.loc[three_month_data['Date'].map(lambda x: datetime.strptime(x, date_format)) <= start_date]
+    print(three_month_data)
 
+    exit()
+    #remove the NANs and replace it with column means
     three_year_data= three_year_data.fillna(three_year_data.mean())
     one_year_data= one_year_data.fillna(one_year_data.mean())
     three_month_data= three_month_data.fillna(three_month_data.mean())
@@ -90,7 +99,6 @@ if __name__ == "__main__":
     for i in range(len(names)):
         portfolio_dict[names[i]] = lots[i], sector[i], weights[i]
 
-    print(portfolio_dict)
 
     #want to order the arrays for cov matrix
     three_year_lots, three_year_sectors, three_year_p_weights = make_arrays(stock_names_three_year,portfolio_dict)

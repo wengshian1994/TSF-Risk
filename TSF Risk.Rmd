@@ -23,7 +23,6 @@ kable(VaR.Data,row.names = TRUE,col.names = "% of Portfolio" ,caption = "Value A
 
 #Weekly Return Distribution
 ```{r}
-
 three.month.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/Three_Month_Port_History")
 one.year.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/One_Year_Port_History")
 three.year.port.data <- read.table(file="/Users/wengshian/Documents/GitHub/TSF-Risk/Three_Year_Port_History")

@@ -1,0 +1,18 @@
+---
+title: "Test_Cmdline_Arg"
+author: "Novdano"
+date: "July 19, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+args <- commandArgs(trailingOnly = T)
+#date <- args[[1]]
+date <- "2018-07-01"
+print(args)
+```
+

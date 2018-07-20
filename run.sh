@@ -2,5 +2,5 @@
 
 DATE=$1
 
-python3 combine_data.py $DATE
-#python3 tsf_test.py $1
+py combine_data_lim.py $DATE
+py tsf_var.py

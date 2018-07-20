@@ -1,19 +1,44 @@
 ---
-title: "Tartan Student Fund Risk Analysis (May 2018)"
-author: "Weng Shian Ho"
-date: "5/29/2018"
+title: "Tartan Students Fund Monthly Risk Comparison"
+author: "Novdano"
+date: "July 18, 2018"
 output: pdf_document
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+#Parse  commandline argument
+```{r}
+args <- commandArgs(trailingOnly = T)
+print(class(args[[1]]))
+date <- args[[1]]
+date <- as.Date(date, "%Y-%m-%d")
+year <- as.numeric(format(date, "%Y"))
+month <- as.numeric(format(date, "%m"))
+if (month == 1){
+  month <- 12
+  year <- year - 1
+} else {
+  month <- month - 1
+}
 
-#Value At Risk Summary (One Week)
+month <- toString(month.abb[[month]])
+year <- toString(year)
+month_year <- paste(month,year, sep="")
+```
+
+
 
 ```{r}
+Sys.which("pdflatex")
+```
+#Value At Risk Summary (One Week)
+```{r}
+library(knitr)
 VaR.Data <- read.table(file="VaR_Numbers",sep='\t')[-1,]
-row_names <- VaR.Data[,1]dl
+row_names <- VaR.Data[,1]
 VaR.Data <- data.frame(as.numeric(as.character(VaR.Data[,2]))*100)
 rownames(VaR.Data) <- row_names
 colnames(VaR.Data) <- c('Value At Risk (VaR)')

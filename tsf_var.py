@@ -28,11 +28,26 @@ def make_arrays(stock_names, portfolio_dict):
 
 
 if __name__ == "__main__":
+    #Set the date from which data is extracted
+    limit_date = sys.argv[1]
+    date_format = '%Y-%m-%d'
+    limit_date = datetime.strptime(limit_date, date_format)
+    year = limit_date.year
+    if limit_date.month == 1:
+        month = datetime.strftime(datetime.strptime(str(12), "%m"), "%b")
+        year = year - 1
+    else:
+        month = datetime.strftime(datetime.strptime(str(limit_date.month - 1), "%m"), "%b")
+    month_year = month+str(year)
+    print(month_year)
+
+
     positions = pd.read_excel('TSF_Portfolio.xlsx')
-    three_year_data = pd.read_csv("three_year_data.csv" %(month_year))
-    one_year_data = pd.read_csv("one_year_data.csv" %(month_year))
-    three_month_data = pd.read_csv("three_month_data.csv" %(month_year))
+    three_year_data = pd.read_csv("three_year_data_%s.csv" %(month_year))
+    one_year_data = pd.read_csv("one_year_data_%s.csv" %(month_year))
+    three_month_data = pd.read_csv("three_month_data_%s.csv" %(month_year))
     latest_price = three_month_data.iloc[len(three_month_data)-1]
+
 
     #remove the NANs and replace it with column means
     three_year_data= three_year_data.fillna(three_year_data.mean())
@@ -144,14 +159,14 @@ if __name__ == "__main__":
     VaR_dataframe["VaR"] = np.power(math.e,VaR_array)-1
     VaR_dataframe.rename(index={0:'95 % VaR (Three Years)',1:'99 % VaR (Three Years)',2:'95 % VaR (One Year)',\
                                 3:'99 % VaR (One Year)',4:'95 % VaR (Three Months)',5:'99 % VaR (Three Months)'}, inplace=True)
-    VaR_dataframe.to_csv("VaR_Numbers", sep='\t')
+    VaR_dataframe.to_csv("VaR_Data/VaR_Numbers_%s" %month_year, sep='\t')
 
     #make weekly dataframe
     Weekly_VaR_dataframe = pd.DataFrame()
     Weekly_VaR_dataframe["VaR"] = np.power(math.e,Weekly_VaR_array)-1
     Weekly_VaR_dataframe.rename(index={0:'95 % VaR (Three Years)',1:'99 % VaR (Three Years)',2:'95 % VaR (One Year)',\
                                 3:'99 % VaR (One Year)',4:'95 % VaR (Three Months)',5:'99 % VaR (Three Months)'}, inplace=True)
-    Weekly_VaR_dataframe.to_csv("VaR_Numbers(weekly)", sep='\t')
+    Weekly_VaR_dataframe.to_csv("VaR_Data/VaR_Numbers(weekly)_%s" %month_year, sep='\t')
 
     #portfolio history (Making it weekly returns)
     three_year_port_history = pd.DataFrame((1+np.dot(three_year_p_weights,three_year_data.transpose()))**5 - 1)

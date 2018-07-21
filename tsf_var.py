@@ -59,6 +59,14 @@ if __name__ == "__main__":
     one_year_weekly = one_year_data.iloc[::5, :]
     three_month_weekly = three_month_data.iloc[::5, :]
 
+    #create monthly data (every 20 days)
+    three_year_monthly = three_year_data.iloc[::20, :]
+    one_year_monthly = one_year_data.iloc[::20, :]
+    three_month_monthly = three_month_data.iloc[::20, :]
+ 
+
+
+
     #process data
     # 1. Make returns
     three_year_data = make_returns(three_year_data.drop('Date', 1))
@@ -68,6 +76,11 @@ if __name__ == "__main__":
     three_year_weekly = make_returns(three_year_weekly.drop('Date', 1))
     one_year_weekly = make_returns(one_year_weekly.drop('Date', 1))
     three_month_weekly = make_returns(three_month_weekly.drop('Date', 1))
+
+    three_year_monthly = make_returns(three_year_monthly.drop('Date', 1))
+    one_year_monthly = make_returns(one_year_monthly.drop('Date', 1))
+    three_month_monthly = make_returns(three_month_monthly.drop('Date', 1))
+
 
     # 2. Make cov matrix/ mean returns
     # Cov Matrix
@@ -79,6 +92,10 @@ if __name__ == "__main__":
     one_year_weekly_cov = one_year_weekly.cov()
     three_month_weekly_cov = three_month_weekly.cov()
 
+    three_year_monthly_cov = three_year_monthly.cov()
+    one_year_monthly_cov = one_year_monthly.cov()
+    three_month_monthly_cov = three_month_monthly.cov()
+
     #Mean vectors
     three_year_mean = np.array(three_year_data.mean(axis=0))
     one_year_mean = np.array(one_year_data.mean(axis=0))
@@ -88,6 +105,9 @@ if __name__ == "__main__":
     one_year_weekly_mean = np.array(one_year_weekly.mean(axis=0))
     three_month_weekly_mean = np.array(three_month_weekly.mean(axis=0))
 
+    three_year_monthly_mean = np.array(three_year_monthly.mean(axis=0))
+    one_year_monthly_mean = np.array(one_year_monthly.mean(axis=0))
+    three_month_monthly_mean = np.array(three_month_monthly.mean(axis=0))
 
     # 3. Get the weights
     names = list(positions["Ticker"])
@@ -131,6 +151,17 @@ if __name__ == "__main__":
     three_month_weekly_mu = (np.dot(three_month_p_weights,three_month_weekly_mean)) -1
     three_month_weekly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_weekly_cov).transpose(),three_month_p_weights))
 
+    #monthly
+    three_year_monthly_mu = (np.dot(three_year_p_weights,three_year_monthly_mean)) -1
+    three_year_monthly_sigma = math.sqrt(np.dot(np.dot(three_year_p_weights,three_year_monthly_cov).transpose(),three_year_p_weights))
+
+    one_year_monthly_mu = (np.dot(one_year_p_weights,one_year_monthly_mean)) -1
+    one_year_monthly_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_monthly_cov).transpose(),one_year_p_weights))
+
+    three_month_monthly_mu = (np.dot(three_month_p_weights,three_month_monthly_mean)) -1
+    three_month_monthly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_weekly_cov).transpose(),three_month_p_weights))
+
+
     # 5. Calculate VaR (Assume log normal distribution of returns)
     ninety_five_VaR_Three_Year = norm.ppf(0.05,loc=three_year_mu,scale=three_year_sigma)
     ninety_nine_VaR_Three_Year = norm.ppf(0.01,loc=three_year_mu,scale=three_year_sigma)
@@ -154,6 +185,17 @@ if __name__ == "__main__":
     Weekly_VaR_array = np.array([ninety_five_weekly_VaR_Three_Year,ninety_nine_weekly_VaR_Three_Year,ninety_five_weekly_VaR_One_Year,ninety_nine_weekly_VaR_One_Year,ninety_five_weekly_VaR_Three_Month,ninety_nine_weekly_VaR_Three_Month])
 
 
+    #Monthly VaR
+    ninety_five_monthly_VaR_Three_Year = norm.ppf(0.05,loc=three_year_monthly_mu,scale=three_year_monthly_sigma)
+    ninety_nine_monthly_VaR_Three_Year = norm.ppf(0.01,loc=three_year_monthly_mu,scale=three_year_monthly_sigma)
+
+    ninety_five_monthly_VaR_One_Year = norm.ppf(0.05,loc=one_year_monthly_mu,scale=one_year_monthly_sigma)
+    ninety_nine_monthly_VaR_One_Year = norm.ppf(0.01,loc=one_year_monthly_mu,scale=one_year_monthly_sigma)
+
+    ninety_five_monthly_VaR_Three_Month = norm.ppf(0.05,loc=three_month_monthly_mu,scale=three_month_monthly_sigma)
+    ninety_nine_monthly_VaR_Three_Month = norm.ppf(0.01,loc=three_month_monthly_mu,scale=three_month_monthly_sigma)
+    Monthly_VaR_array = np.array([ninety_five_monthly_VaR_Three_Year,ninety_nine_monthly_VaR_Three_Year,ninety_five_monthly_VaR_One_Year,ninety_nine_monthly_VaR_One_Year,ninety_five_monthly_VaR_Three_Month,ninety_nine_monthly_VaR_Three_Month])
+
     #Save dataframe into excel sheet
     VaR_dataframe = pd.DataFrame()
     VaR_dataframe["VaR"] = np.power(math.e,VaR_array)-1
@@ -167,6 +209,14 @@ if __name__ == "__main__":
     Weekly_VaR_dataframe.rename(index={0:'95 % VaR (Three Years)',1:'99 % VaR (Three Years)',2:'95 % VaR (One Year)',\
                                 3:'99 % VaR (One Year)',4:'95 % VaR (Three Months)',5:'99 % VaR (Three Months)'}, inplace=True)
     Weekly_VaR_dataframe.to_csv("VaR_Data/VaR_Numbers(weekly)_%s" %month_year, sep='\t')
+
+    #make monthly dataframe
+    Monthly_VaR_dataframe = pd.DataFrame()
+    Monthly_VaR_dataframe["VaR"] = np.power(math.e,Monthly_VaR_array)-1
+    Monthly_VaR_dataframe.rename(index={0:'95 % VaR (Three Years)',1:'99 % VaR (Three Years)',2:'95 % VaR (One Year)',\
+                                3:'99 % VaR (One Year)',4:'95 % VaR (Three Months)',5:'99 % VaR (Three Months)'}, inplace=True)
+    Monthly_VaR_dataframe.to_csv("VaR_Numbers(monthly)", sep='\t')
+
 
     #portfolio history (Making it weekly returns)
     three_year_port_history = pd.DataFrame((1+np.dot(three_year_p_weights,three_year_data.transpose()))**5 - 1)

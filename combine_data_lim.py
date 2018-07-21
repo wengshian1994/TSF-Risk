@@ -111,9 +111,9 @@ for file in glob.glob("*.txt"):
 #frame_three_month=frame_three_month.dropna(axis=1)
 
 os.chdir("..")
-three_year_df.to_csv("three_year_data_%s.csv" %(month_year))
-one_year_df.to_csv("one_year_data_%s.csv" %(month_year))
-three_month_df.to_csv("three_month_data_%s.csv" %(month_year))
+three_year_df.to_csv("three_years/three_year_data_%s.csv" %(month_year))
+one_year_df.to_csv("one_year/one_year_data_%s.csv" %(month_year))
+three_month_df.to_csv("three_months/three_month_data_%s.csv" %(month_year))
 
 # change row names to stock ticker symbols
 #df.index = fileList

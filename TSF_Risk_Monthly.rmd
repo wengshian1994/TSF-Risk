@@ -9,66 +9,104 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+```{r}
 #Parse  commandline argument
+# args <- commandArgs(trailingOnly = T)
+# print(class(args[[1]]))
+# date <- args[[1]]
+# date <- as.Date(date, "%Y-%m-%d")
+# year <- as.numeric(format(date, "%Y"))
+# month <- as.numeric(format(date, "%m"))
+# if (month == 1){
+#   month <- 12
+#   year <- year - 1
+# } else {
+#   month <- month - 1
+# }
+# 
+# month <- toString(month.abb[[month]])
+# year <- toString(year)
+# month_year <- paste(month,year, sep="")
+```
+
+
 ```{r}
-args <- commandArgs(trailingOnly = T)
-print(class(args[[1]]))
-date <- args[[1]]
-date <- as.Date(date, "%Y-%m-%d")
-year <- as.numeric(format(date, "%Y"))
-month <- as.numeric(format(date, "%m"))
-if (month == 1){
-  month <- 12
-  year <- year - 1
-} else {
-  month <- month - 1
+start_month <- 7
+start_year <- 2017
+end_month <- 6
+end_year <- 2018
+month_years <- c()
+if (start_year != end_year){
+  curr_month <- start_month
+  curr_year <- start_year
+  while (curr_month<=end_month || curr_year<end_year ){
+    month_years <- c(month_years, paste(toString(month.abb[[curr_month]]), toString(curr_year), sep=""))
+    if (curr_month == 12){
+      curr_month <- 1
+      curr_year <- curr_year + 1
+    } else {
+      curr_month <- curr_month+ 1
+    }
+  }
 }
-
-month <- toString(month.abb[[month]])
-year <- toString(year)
-month_year <- paste(month,year, sep="")
 ```
 
-
-
+#VaR Summary (Daily)
 ```{r}
-Sys.which("pdflatex")
-```
-#Value At Risk Summary (One Week)
-```{r}
-library(knitr)
-VaR.Data <- read.table(file="VaR_Numbers",sep='\t')[-1,]
-row_names <- VaR.Data[,1]
-VaR.Data <- data.frame(as.numeric(as.character(VaR.Data[,2]))*100)
-rownames(VaR.Data) <- row_names
-colnames(VaR.Data) <- c('Value At Risk (VaR)')
-kable(VaR.Data,row.names = TRUE,col.names = "% of Portfolio" ,caption = "Value At Risk (%)",digits = 2)
-```
-
-#Weekly Return Distribution
-```{r}
-
-three.month.port.data <- read.table(file="Three_Month_Port_History")
-one.year.port.data <- read.table(file="One_Year_Port_History")
-three.year.port.data <- read.table(file="Three_Year_Port_History")
-```
-
-```{r, warning=FALSE}
 library(ggplot2)
-#3 Month Plot
-ggplot(data=three.month.port.data, aes(three.month.port.data$X0)) + geom_histogram(breaks=seq(min(three.month.port.data$X0), max(three.month.port.data$X0), by = 0.005), col="red", fill="red", alpha = .2) + 
-  labs(title="Histogram for Portfolio Returns (3 Month Data)") +
-  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
-
-#1 Year Plot
-ggplot(data=one.year.port.data, aes(one.year.port.data$X0)) + geom_histogram(breaks=seq(min(one.year.port.data$X0), max(one.year.port.data$X0), by = 0.005), col="blue", fill="blue", alpha = .2) + 
-  labs(title="Histogram for Portfolio Returns (1 Year Data)") +
-  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
-
-#3 Year Plot
-ggplot(data=three.year.port.data, aes(three.year.port.data$X0)) + geom_histogram(breaks=seq(min(three.year.port.data$X0), max(three.year.port.data$X0), by = 0.005), col="black", fill="black", alpha = .2) + 
-  labs(title="Histogram for Portfolio Returns (3 Year Data)") +
-  labs(x="Weekly Returns", y="Count")+ theme(plot.title = element_text(hjust = 0.5))
-
+library(stringr)
+ninety_five_3Y <- rep(0,12)
+ninety_nine_3Y <- rep(0,12)
+ninety_five_1Y <- rep(0,12)
+ninety_nine_1Y <- rep(0,12)
+ninety_five_3M <- rep(0,12)
+ninety_nine_3M <- rep(0,12)
+for (i in 1:length(month_years)){
+  month_year <- month_years[[i]]
+  VaR.Data <- read.table(file=paste("VaR_Data/VaR_Numbers_", month_year, sep=""),sep='\t')[-1,]
+  ninety_five_3Y[[i]] <- as.character.factor(VaR.Data[1,2])
+  ninety_nine_3Y[[i]] <- as.character.factor(VaR.Data[2,2])
+  ninety_five_1Y[[i]] <- as.character.factor(VaR.Data[3,2])
+  ninety_nine_1Y[[i]] <- as.character.factor(VaR.Data[4,2])
+  ninety_five_3M[[i]] <- as.character.factor(VaR.Data[5,2])
+  ninety_nine_3M[[i]] <- as.character.factor(VaR.Data[6,2])
+}
+#95% VaR 3 Years
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_five_3Y)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) + 
+  labs(title="95% VaR 3 Years") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
+#99% VaR 3 Years
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_nine_3Y)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) +
+  labs(title="99% VaR 3 Years") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
+#95% VaR 1 Year
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_five_1Y)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) +
+  labs(title="95% VaR 1 Year") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
+#99% VaR 1 Year
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_nine_1Y)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) +
+  labs(title="99% VaR 1 Year") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
+#95% VaR 3 Months
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_five_3M)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) +
+  labs(title="95% VaR 3 Months") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
+#99% VaR 3 Months
+df <- data.frame(month=factor(month_years, level=month_years), var=ninety_nine_3M)
+ggplot(df,aes(x=df$month,y=df$var))+geom_bar(stat="identity", col="red", fill="red", alpha=0.2) +
+  labs(title="99% VaR 3 Months") +
+  labs(x="Months", y="VaR")+ theme(plot.title = element_text(hjust = 0.5)) + 
+  theme(axis.text.x = element_text(size=10, angle=45, hjus=1, vjust=1))
 ```
 

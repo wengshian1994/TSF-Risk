@@ -43,9 +43,9 @@ if __name__ == "__main__":
 
 
     positions = pd.read_excel('TSF_Portfolio.xlsx')
-    three_year_data = pd.read_csv("three_year_data_%s.csv" %(month_year))
-    one_year_data = pd.read_csv("one_year_data_%s.csv" %(month_year))
-    three_month_data = pd.read_csv("three_month_data_%s.csv" %(month_year))
+    three_year_data = pd.read_csv("three_years/three_year_data_%s.csv" %(month_year))
+    one_year_data = pd.read_csv("one_year/one_year_data_%s.csv" %(month_year))
+    three_month_data = pd.read_csv("three_months/three_month_data_%s.csv" %(month_year))
     latest_price = three_month_data.iloc[len(three_month_data)-1]
 
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     three_year_monthly = three_year_data.iloc[::20, :]
     one_year_monthly = one_year_data.iloc[::20, :]
     three_month_monthly = three_month_data.iloc[::20, :]
- 
+
 
 
 
@@ -132,23 +132,23 @@ if __name__ == "__main__":
     #three_month_p_weights = np.array(three_month_p_weights)/sum(three_month_p_weights)
 
     # 4. Get respective means and sigmas
-    three_year_mu = (1+np.dot(three_year_p_weights,three_year_mean))**5 -1
+    three_year_mu = (1+np.dot(three_year_p_weights,three_year_mean))**20 -1
     three_year_sigma = math.sqrt(np.dot(np.dot(three_year_p_weights,three_year_cov).transpose(),three_year_p_weights))*math.sqrt(5)
 
-    one_year_mu = (1+np.dot(one_year_p_weights,one_year_mean))**5 - 1
+    one_year_mu = (1+np.dot(one_year_p_weights,one_year_mean))**20 - 1
     one_year_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_cov).transpose(),one_year_p_weights))*math.sqrt(5)
 
-    three_month_mu = (1+np.dot(three_month_p_weights,three_month_mean))**5 - 1
+    three_month_mu = (1+np.dot(three_month_p_weights,three_month_mean))**20 - 1
     three_month_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_cov).transpose(),three_month_p_weights))*math.sqrt(5)
 
     #weekly
-    three_year_weekly_mu = (np.dot(three_year_p_weights,three_year_weekly_mean)) -1
+    three_year_weekly_mu = (1 + np.dot(three_year_p_weights,three_year_weekly_mean))**4 -1
     three_year_weekly_sigma = math.sqrt(np.dot(np.dot(three_year_p_weights,three_year_weekly_cov).transpose(),three_year_p_weights))
 
-    one_year_weekly_mu = (np.dot(one_year_p_weights,one_year_weekly_mean)) -1
+    one_year_weekly_mu = (1 + np.dot(one_year_p_weights,one_year_weekly_mean))**4 -1
     one_year_weekly_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_weekly_cov).transpose(),one_year_p_weights))
 
-    three_month_weekly_mu = (np.dot(three_month_p_weights,three_month_weekly_mean)) -1
+    three_month_weekly_mu = (1 + np.dot(three_month_p_weights,three_month_weekly_mean))**4 -1
     three_month_weekly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_weekly_cov).transpose(),three_month_p_weights))
 
     #monthly
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     one_year_monthly_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_monthly_cov).transpose(),one_year_p_weights))
 
     three_month_monthly_mu = (np.dot(three_month_p_weights,three_month_monthly_mean)) -1
-    three_month_monthly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_weekly_cov).transpose(),three_month_p_weights))
+    three_month_monthly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_monthly_cov).transpose(),three_month_p_weights))
 
 
     # 5. Calculate VaR (Assume log normal distribution of returns)
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     Monthly_VaR_dataframe["VaR"] = np.power(math.e,Monthly_VaR_array)-1
     Monthly_VaR_dataframe.rename(index={0:'95 % VaR (Three Years)',1:'99 % VaR (Three Years)',2:'95 % VaR (One Year)',\
                                 3:'99 % VaR (One Year)',4:'95 % VaR (Three Months)',5:'99 % VaR (Three Months)'}, inplace=True)
-    Monthly_VaR_dataframe.to_csv("VaR_Numbers(monthly)", sep='\t')
+    Monthly_VaR_dataframe.to_csv("VaR_Data/VaR_Numbers(monthly)_%s" %month_year, sep='\t')
 
 
     #portfolio history (Making it weekly returns)

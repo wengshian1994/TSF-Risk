@@ -132,23 +132,24 @@ if __name__ == "__main__":
     #three_month_p_weights = np.array(three_month_p_weights)/sum(three_month_p_weights)
 
     # 4. Get respective means and sigmas
-    three_year_mu = (1+np.dot(three_year_p_weights,three_year_mean))**20 -1
+    three_year_mu = (np.dot(three_year_p_weights,three_year_mean)) -1
     three_year_sigma = math.sqrt(np.dot(np.dot(three_year_p_weights,three_year_cov).transpose(),three_year_p_weights))*math.sqrt(5)
 
-    one_year_mu = (1+np.dot(one_year_p_weights,one_year_mean))**20 - 1
+    one_year_mu = (np.dot(one_year_p_weights,one_year_mean)) - 1
     one_year_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_cov).transpose(),one_year_p_weights))*math.sqrt(5)
 
-    three_month_mu = (1+np.dot(three_month_p_weights,three_month_mean))**20 - 1
+    three_month_mu = (np.dot(three_month_p_weights,three_month_mean)) - 1
     three_month_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_cov).transpose(),three_month_p_weights))*math.sqrt(5)
 
     #weekly
-    three_year_weekly_mu = (1 + np.dot(three_year_p_weights,three_year_weekly_mean))**4 -1
+    three_year_weekly_mu = (np.dot(three_year_p_weights,three_year_weekly_mean)) -1
+    print(np.dot(three_year_p_weights,three_year_weekly_mean) - 1)
     three_year_weekly_sigma = math.sqrt(np.dot(np.dot(three_year_p_weights,three_year_weekly_cov).transpose(),three_year_p_weights))
 
-    one_year_weekly_mu = (1 + np.dot(one_year_p_weights,one_year_weekly_mean))**4 -1
+    one_year_weekly_mu = (np.dot(one_year_p_weights,one_year_weekly_mean)) -1
     one_year_weekly_sigma = math.sqrt(np.dot(np.dot(one_year_p_weights,one_year_weekly_cov).transpose(),one_year_p_weights))
 
-    three_month_weekly_mu = (1 + np.dot(three_month_p_weights,three_month_weekly_mean))**4 -1
+    three_month_weekly_mu = (np.dot(three_month_p_weights,three_month_weekly_mean)) -1
     three_month_weekly_sigma = math.sqrt(np.dot(np.dot(three_month_p_weights,three_month_weekly_cov).transpose(),three_month_p_weights))
 
     #monthly
